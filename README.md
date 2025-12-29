@@ -8,7 +8,7 @@ A full-stack application that scrapes articles from BeyondChats blog, improves t
 
 ## Phases
 
-- [X] Phase 1: Backend API + Web Scraping
+- [✓] Phase 1: Backend API + Web Scraping
 - [ ] Phase 2: AI Article Processing
 - [ ] Phase 3: React Frontend
 
