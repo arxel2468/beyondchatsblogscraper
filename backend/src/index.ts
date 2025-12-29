@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import { initializeDatabase } from './db/index.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -24,8 +25,16 @@ app.get('/', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`
+async function start() {
+  // Initialize database
+  initializeDatabase();
+
+  app.listen(PORT, () => {
+    console.log(`
 🚀 Server running on http://localhost:${PORT}
-  `);
-});
+📦 Database initialized
+    `);
+  });
+}
+
+start();
