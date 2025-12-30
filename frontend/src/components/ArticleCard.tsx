@@ -22,6 +22,7 @@ const ArticleCard = ({ article }: Props) => {
       boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
       transition: 'transform 0.2s, box-shadow 0.2s',
     }}>
+
       <div style={{ padding: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
           <span style={{

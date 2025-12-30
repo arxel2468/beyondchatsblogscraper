@@ -177,18 +177,6 @@ const ArticlePage = () => {
           </div>
         )}
 
-        {article.imageUrl && (
-          <img
-            src={article.imageUrl}
-            alt={article.title}
-            style={{
-              width: '100%',
-              borderRadius: '12px',
-              marginBottom: '24px',
-            }}
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-          />
-        )}
 
         <div style={{
           background: 'white',
