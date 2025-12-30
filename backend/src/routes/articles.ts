@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import db from '../db/index.js';
 import { rowToArticle } from '../db/helpers.js';
+import { processArticle } from '../services/articleProcessor.js';
 
 const router = Router();
 
@@ -277,6 +278,38 @@ router.delete('/:id', (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error deleting article:', error);
     res.status(500).json({ error: 'Failed to delete article' });
+  }
+});
+
+
+/**
+ * POST /api/articles/:id/process
+ * Process an article: search, scrape, and generate improved version
+ */
+router.post('/:id/process', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    // Check if GROQ_API_KEY is set
+    if (!process.env.GROQ_API_KEY) {
+      return res.status(500).json({
+        error: 'GROQ_API_KEY not configured. Please set it in .env file.',
+      });
+    }
+
+    const improvedArticle = await processArticle(id);
+
+    res.json({
+      success: true,
+      message: 'Article processed successfully',
+      originalId: id,
+      improvedArticle,
+    });
+  } catch (error: any) {
+    console.error('Process error:', error);
+    res.status(500).json({
+      error: error.message || 'Failed to process article',
+    });
   }
 });
 
