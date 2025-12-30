@@ -61,32 +61,46 @@ export async function scrapeBeyondChatsArticles(count: number = 5): Promise<Scra
   console.log('🔍 Starting to scrape BeyondChats blog (light mode)...');
   console.log(`📊 Target: ${count} oldest articles\n`);
 
-  // We need to collect articles from last pages (15, 14, 13, etc.)
-  // until we have enough
+  // Collect article links from last pages until we have enough
   const allArticleLinks: string[] = [];
-  const pagesToCheck = [15, 14, 13, 12, 11]; // Start from last page
+  let currentPage = 15; // Start from last page
+  const minPage = 10; // Don't go beyond page 10
 
-  console.log('📑 Collecting article links from last pages...');
+  console.log('📑 Collecting article links from last pages...\n');
 
-  for (const pageNum of pagesToCheck) {
-    if (allArticleLinks.length >= count) break;
+  while (allArticleLinks.length < count && currentPage >= minPage) {
+    const links = await getArticleLinksFromPage(currentPage);
 
-    const links = await getArticleLinksFromPage(pageNum);
+    // Add only unique links
+    for (const link of links) {
+      if (!allArticleLinks.includes(link)) {
+        allArticleLinks.push(link);
+        console.log(`   📌 Added: ${link}`);
+      }
+    }
 
-    // Add links in reverse order (oldest first from each page)
-    // Actually, articles on page 15 are oldest, so we add them first
-    allArticleLinks.push(...links);
+    console.log(`   📊 Total collected so far: ${allArticleLinks.length}\n`);
+
+    // Move to previous page
+    currentPage--;
 
     // Small delay between page requests
     await new Promise((r) => setTimeout(r, 500));
   }
 
-  console.log(`\n📝 Total article links collected: ${allArticleLinks.length}`);
+  console.log(`\n📝 Total unique article links collected: ${allArticleLinks.length}`);
 
-  // The articles from page 15 are oldest, then page 14, etc.
-  // So we take from the beginning of our list
+  // Take the required number of articles
+  // The first ones in our list are from page 15 (oldest), then page 14, etc.
   const articlesToScrape = allArticleLinks.slice(0, count);
-  console.log(`📚 Will scrape ${articlesToScrape.length} oldest articles\n`);
+  console.log(`📚 Will scrape ${articlesToScrape.length} articles\n`);
+
+  // Debug: Show which articles we'll scrape
+  console.log('Articles to scrape:');
+  articlesToScrape.forEach((link, i) => {
+    console.log(`   ${i + 1}. ${link}`);
+  });
+  console.log('');
 
   const articles: ScrapedArticle[] = [];
 
@@ -98,12 +112,12 @@ export async function scrapeBeyondChatsArticles(count: number = 5): Promise<Scra
       const article = await scrapeArticleContent(link);
       if (article) {
         articles.push(article);
-        console.log(`   ✅ "${article.title.slice(0, 50)}..."`);
+        console.log(`   ✅ "${article.title.slice(0, 50)}..."\n`);
       }
       // Small delay between requests
       await new Promise((r) => setTimeout(r, 1000));
     } catch (error: any) {
-      console.error(`   ❌ Failed: ${error.message}`);
+      console.error(`   ❌ Failed: ${error.message}\n`);
     }
   }
 
