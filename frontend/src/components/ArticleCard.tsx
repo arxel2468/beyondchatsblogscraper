@@ -22,16 +22,6 @@ const ArticleCard = ({ article }: Props) => {
       boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
       transition: 'transform 0.2s, box-shadow 0.2s',
     }}>
-      {article.imageUrl && (
-        <div style={{ height: '180px', overflow: 'hidden' }}>
-          <img
-            src={article.imageUrl}
-            alt={article.title}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-          />
-        </div>
-      )}
       <div style={{ padding: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
           <span style={{
